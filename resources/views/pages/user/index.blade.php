@@ -27,6 +27,7 @@
                         <th>No</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>No HP</th>
                         <th>#</th>
                       </tr>
                   </thead>
@@ -56,6 +57,10 @@
               <label>Email</label>
               <input type="text" name="email" class="form-control" required="">
             </div>
+            <div class="form-group">
+              <label>No HP</label>
+              <input type="text" name="no_hp" class="form-control" required="">
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" id="closeAddBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -83,6 +88,10 @@
             <div class="form-group">
               <label>Email</label>
               <input type="text" id="email" name="email" class="form-control" required="">
+            </div>
+            <div class="form-group">
+              <label>No HP</label>
+              <input type="text" id="no_hp" name="no_hp" class="form-control" required="">
             </div>
             <div class="form-group">
               <label>Password</label>
@@ -115,6 +124,7 @@
           {data: 'DT_RowIndex', name: 'DT_RowIndex'},
           {data: 'name', name: 'name'},
           {data: 'email', name: 'email'},
+          {data: 'no_hp', name: 'no_hp'},
 
           {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
@@ -184,12 +194,14 @@
         let dataId = $(this).data('id');
         let name = $(this).data('name');
         let email = $(this).data('email');
+        let no_hp = $(this).data('no_hp');
 
         $('#editDataModal').modal('show');
 
         $('#editDataId').val(dataId);
         $('#name').val(name);
         $('#email').val(email);
+        $('#no_hp').val(no_hp);
       });
 
       // /*------------------------------------------ Edit data user --------------------------------------------*/ 

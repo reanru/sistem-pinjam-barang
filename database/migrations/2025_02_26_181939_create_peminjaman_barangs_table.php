@@ -14,7 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('peminjaman_barangs', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->uuid('user_id');
+            $table->string('kode_barang');
+            $table->string('nama_barang');
+            $table->string('no_hp');
+            $table->text('deskripsi')->nullable();
+            $table->date('mulai');
+            $table->date('selesai');
             $table->timestamps();
         });
     }

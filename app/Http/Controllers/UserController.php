@@ -27,12 +27,14 @@ class UserController extends Controller
             $rules = [
                 'name' => 'required',
                 'email' => 'required|unique:users',
+                'no_hp' => 'required',
             ];
     
             $messages  = [
                 'name.required' => 'Nama : Tidak boleh kosong.',
                 'email.required' => 'Email : Tidak boleh kosong.',
-                'email.unique' => 'Email : Email telah digunakan.',
+                'email.unique' => 'Email : Telah digunakan.',
+                'no_hp.required' => 'No HP : Tidak boleh kosong.',
             ];
             
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -43,6 +45,7 @@ class UserController extends Controller
                 User::create([
                     'name' => $request->name,
                     'email' => $request->email,
+                    'no_hp' => $request->no_hp,
                     'password' => bcrypt('pengguna123'),
                     'role' => 'pengguna'
                 ]);
@@ -76,12 +79,14 @@ class UserController extends Controller
             $rules = [
                 'email' => 'required|unique:users,email,' .$id,
                 'name' => 'required',
+                'no_hp' => 'required',
             ];
 
             $messages  = [
                 'email.required' => 'Email : Tidak boleh kosong.',
-                'email.unique' => 'Email : Email telah digunakan.',
+                'email.unique' => 'Email : Telah digunakan.',
                 'name.required' => 'Nama : Tidak boleh kosong.',
+                'no_hp.required' => 'No HP : Tidak boleh kosong.',
             ];
             
             if($request->password){
@@ -97,6 +102,7 @@ class UserController extends Controller
                 $data = [
                     'email' => $request->email,
                     'name' => $request->name,
+                    'no_hp' => $request->no_hp,
                 ];
 
                 if($request->password) $data += ['password' => bcrypt($request->password)];
@@ -127,6 +133,7 @@ class UserController extends Controller
                             'id',
                             'name',
                             'email',
+                            'no_hp'
                         )->get();
 
         return Datatables::of($userList)->addIndexColumn()
@@ -137,12 +144,16 @@ class UserController extends Controller
             ->addColumn('email', function ($userList) {
                 return $userList->email;
             })
+            ->addColumn('no_hp', function ($userList) {
+                return $userList->no_hp;
+            })
             ->addColumn('action', function($userList){
                 return '
                     <a href="javascript:void(0)" data-toggle="tooltip"
                         data-id="'.$userList->id.'" 
                         data-name="'.$userList->name.'" 
                         data-email="'.$userList->email.'" 
+                        data-no_hp="'.$userList->no_hp.'" 
                         data-original-title="Edit" class="edit btn btn-primary btn-sm show-edit-modal"><i class="fas fa-edit"></i></a>
                 ';
             })
