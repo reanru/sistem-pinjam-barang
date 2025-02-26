@@ -23,12 +23,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 Auth::routes();
 
-// Route::group(['middleware' => ['auth']], function(){
-// });
+Route::group(['middleware' => ['auth']], function(){
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    
+    Route::resource('/pengguna', UserController::class);
+    Route::get('datatable-pengguna', [UserController::class, 'datatable'])->name('pengguna.datatable');
+});
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-Route::resource('/anggota-jemaat', UserController::class);
-Route::get('datatable-anggota-jemaat', [UserController::class, 'datatable'])->name('anggota-jemaat.datatable');
 
 

@@ -23,11 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'kolom',
-        'umur',
-        'pekerjaan',
-        'gender',
-        'status_pernikahan',
+        'status',
         'role'
     ];
 

@@ -26,8 +26,7 @@
                       <tr>
                         <th>No</th>
                         <th>Name</th>
-                        <th>Email / No HP</th>
-                        <th>Kolom</th>
+                        <th>Email</th>
                         <th>#</th>
                       </tr>
                   </thead>
@@ -54,11 +53,7 @@
               <input type="text" name="name" class="form-control" required="">
             </div>
             <div class="form-group">
-              <label>Kolom</label>
-              <input type="number" name="kolom" class="form-control" required="">
-            </div>
-            <div class="form-group">
-              <label>Email / No HP</label>
+              <label>Email</label>
               <input type="text" name="email" class="form-control" required="">
             </div>
           </div>
@@ -86,11 +81,7 @@
               <input type="text" id="name" name="name" class="form-control" required="">
             </div>
             <div class="form-group">
-              <label>Kolom</label>
-              <input type="number" id="kolom" name="kolom" class="form-control" required="">
-            </div>
-            <div class="form-group">
-              <label>Email / No HP</label>
+              <label>Email</label>
               <input type="text" id="email" name="email" class="form-control" required="">
             </div>
             <div class="form-group">
@@ -101,84 +92,6 @@
           <div class="modal-footer">
             <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             <button type="submit" id="confirmEditBtn" class="btn btn-primary">Simpan</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Detail user -->
-  <div class="modal fade" id="detailDataModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <form id="editDataForm">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Detail Data Jemaat</h5>
-          </div>
-          <div class="modal-body">
-
-            <div class="row justify-content-center">
-              <div class="col-12 col-md-12">
-                
-                <div class="row">      
-                  <div class="col-md-6 col-12">
-                    <div class="" style="padding-top: 15px; padding-bottom: 15px;">
-                      <div class="" style="font-weight: bold">Nama</div>
-                      <span id="detail_name"></span>
-                    </div>
-                  </div>
-                  <div class="col-md-6 col-12">
-                    <div class="" style="padding-top: 15px; padding-bottom: 15px;">
-                      <div class="" style="font-weight: bold">Email</div>
-                      <span id="detail_email"></span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">      
-                  <div class="col-md-6 col-12">
-                    <div class="" style="padding-top: 15px; padding-bottom: 15px;">
-                      <div class="" style="font-weight: bold">Kolom</div>
-                      <span id="detail_kolom"></span>
-                    </div>
-                  </div>
-                  <div class="col-md-6 col-12">
-                    <div class="" style="padding-top: 15px; padding-bottom: 15px;">
-                      <div class="" style="font-weight: bold">Umur</div>
-                      <span id="detail_umur"></span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">      
-                  <div class="col-md-6 col-12">
-                    <div class="" style="padding-top: 15px; padding-bottom: 15px;">
-                      <div class="" style="font-weight: bold">Pekerjaan</div>
-                      <span id="detail_pekerjaan"></span>
-                    </div>
-                  </div>
-                  <div class="col-md-6 col-12">
-                    <div class="" style="padding-top: 15px; padding-bottom: 15px;">
-                      <div class="" style="font-weight: bold">Jenis Kelamin</div>
-                      <span id="detail_jenis_kelamin"></span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">      
-                  <div class="col-md-6 col-12">
-                    <div class="" style="padding-top: 15px; padding-bottom:">
-                      <div class="" style="font-weight: bold">Status Pernikahan</div>
-                      <span id="detail_status_pernikahan"></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
           </div>
         </form>
       </div>
@@ -197,17 +110,16 @@
         processing: true,
         serverSide: false,
         autoWidth: false,
-        ajax: "{{ route('anggota-jemaat.datatable') }}",
+        ajax: "{{ route('pengguna.datatable') }}",
         columns: [
           {data: 'DT_RowIndex', name: 'DT_RowIndex'},
           {data: 'name', name: 'name'},
           {data: 'email', name: 'email'},
-          {data: 'kolom', name: 'kolom'},
 
           {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         columnDefs: [
-          { className: "dt-center", targets: [ 0, 1, 2, 3, 4 ] }
+          { className: "dt-center", targets: [ 0, 1, 2, 3 ] }
         ]
       });
 
@@ -227,7 +139,7 @@
 
         $.ajax({
           data: $('#newDataForm').serialize(),
-          url: "{{ route('anggota-jemaat.store') }}",
+          url: "{{ route('pengguna.store') }}",
           type: "POST",
           dataType: 'json',
           success: function (data) {
@@ -271,14 +183,12 @@
 
         let dataId = $(this).data('id');
         let name = $(this).data('name');
-        let kolom = $(this).data('kolom');
         let email = $(this).data('email');
 
         $('#editDataModal').modal('show');
 
         $('#editDataId').val(dataId);
         $('#name').val(name);
-        $('#kolom').val(kolom);
         $('#email').val(email);
       });
 
@@ -288,7 +198,7 @@
         $('#confirmEditBtn').html('Menyimpan...');
       
         let dataId = $('#editDataId').val();
-        let url = '{{ route('anggota-jemaat.update', ':id') }}'; url = url.replace(':id', dataId);
+        let url = '{{ route('pengguna.update', ':id') }}'; url = url.replace(':id', dataId);
 
         // disable button while editing
         $("#confirmEditBtn").prop("disabled",true); 
@@ -332,32 +242,6 @@
             $("#closeEditBtn").prop("disabled",false);
           }
         });
-      });
-
-        // /*------------------------------------------ Show modal button detail user --------------------------------------------*/
-        $(document).on('click', '.show-detail-modal', function () {
-        $('#detailDataModal').modal('show');
-
-        let name = $(this).data('name');
-        let email = $(this).data('email');
-        let kolom = $(this).data('kolom');
-        let umur = $(this).data('umur');
-        let pekerjaan = $(this).data('pekerjaan');
-        let jenis_kelamin = $(this).data('jenis_kelamin');
-        let status_pernikahan = $(this).data('status_pernikahan');
-
-        $('#detailDataModal').modal('show');
-
-          console.log('check ', pekerjaan, umur);
-          
-
-        $('#detail_name').text(name ?? '');
-        $('#detail_email').text(email ?? '');
-        $('#detail_kolom').text(kolom ?? '');
-        $('#detail_umur').text(umur ?? '');
-        $('#detail_pekerjaan').text(pekerjaan ?? '');
-        $('#detail_jenis_kelamin').text(jenis_kelamin === 'L' ? 'Laki-laki' : jenis_kelamin === 'P' ? 'Perempuan' : '');
-        $('#detail_status_pernikahan').text(status_pernikahan === 'menikah' ? 'Menikah' : status_pernikahan === 'belum_menikah' ? 'Belum Menikah' : '');
       });
 
     });

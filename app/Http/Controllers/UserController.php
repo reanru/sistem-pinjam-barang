@@ -26,13 +26,11 @@ class UserController extends Controller
         try {            
             $rules = [
                 'name' => 'required',
-                'kolom' => 'required',
                 'email' => 'required|unique:users',
             ];
     
             $messages  = [
                 'name.required' => 'Nama : Tidak boleh kosong.',
-                'nim.required' => 'Kolom : Tidak boleh kosong.',
                 'email.required' => 'Email : Tidak boleh kosong.',
                 'email.unique' => 'Email : Email telah digunakan.',
             ];
@@ -44,10 +42,9 @@ class UserController extends Controller
             }else{                 
                 User::create([
                     'name' => $request->name,
-                    'kolom' => $request->kolom,
                     'email' => $request->email,
-                    'password' => bcrypt('jemaat123'),
-                    'role' => 'jemaat'
+                    'password' => bcrypt('pengguna123'),
+                    'role' => 'pengguna'
                 ]);
 
                 DB::commit();
@@ -79,14 +76,12 @@ class UserController extends Controller
             $rules = [
                 'email' => 'required|unique:users,email,' .$id,
                 'name' => 'required',
-                'kolom' => 'required',
             ];
 
             $messages  = [
                 'email.required' => 'Email : Tidak boleh kosong.',
                 'email.unique' => 'Email : Email telah digunakan.',
                 'name.required' => 'Nama : Tidak boleh kosong.',
-                'kolom.required' => 'Kolom : Tidak boleh kosong.',
             ];
             
             if($request->password){
@@ -100,7 +95,6 @@ class UserController extends Controller
                 return response()->json(['status'=>'validation error','message'=>$validator->messages()],400);
             }else{                
                 $data = [
-                    'kolom' => $request->kolom,
                     'email' => $request->email,
                     'name' => $request->name,
                 ];
@@ -127,17 +121,12 @@ class UserController extends Controller
     public function datatable(){
         // mengambil data
         $userList = DB::table('users')
-                        ->where('role','jemaat')
+                        ->where('role','pengguna')
                         ->orderBy('created_at', 'DESC')
                         ->select(
                             'id',
                             'name',
                             'email',
-                            'kolom',
-                            'umur',
-                            'pekerjaan',
-                            'gender',
-                            'status_pernikahan',
                         )->get();
 
         return Datatables::of($userList)->addIndexColumn()
@@ -148,27 +137,13 @@ class UserController extends Controller
             ->addColumn('email', function ($userList) {
                 return $userList->email;
             })
-            ->addColumn('kolom', function ($userList) {
-                return $userList->kolom;
-            })
             ->addColumn('action', function($userList){
                 return '
                     <a href="javascript:void(0)" data-toggle="tooltip"
                         data-id="'.$userList->id.'" 
                         data-name="'.$userList->name.'" 
-                        data-kolom="'.$userList->kolom.'" 
                         data-email="'.$userList->email.'" 
                         data-original-title="Edit" class="edit btn btn-primary btn-sm show-edit-modal"><i class="fas fa-edit"></i></a>
-                    
-                    <a href="javascript:void(0)" data-toggle="tooltip"
-                        data-name="'.$userList->name.'" 
-                        data-kolom="'.$userList->kolom.'" 
-                        data-email="'.$userList->email.'" 
-                        data-umur="'.$userList->umur.'" 
-                        data-pekerjaan="'.$userList->pekerjaan.'" 
-                        data-jenis_kelamin="'.$userList->gender.'"
-                        data-status_pernikahan="'.$userList->status_pernikahan.'" 
-                        data-original-title="Edit" class="edit btn btn-primary btn-sm show-detail-modal"><i class="fas fa-eye"></i></a>
                 ';
             })
             ->rawColumns(['status','action'])
