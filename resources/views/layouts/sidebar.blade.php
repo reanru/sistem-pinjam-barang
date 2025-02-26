@@ -10,6 +10,7 @@
         @if(Auth::user()->role == 'admin')
 
             <li class="{{ request()->segment(1) == 'pengguna' ? 'active' : '' }}"><a class="nav-link" href="{{ route('pengguna.index') }}"><i class="fas fa-square"></i> <span>Pengguna</span></a></li>
+            <li class="{{ request()->segment(1) == 'barang' ? 'active' : '' }}"><a class="nav-link" href="{{ route('barang.index') }}"><i class="fas fa-square"></i> <span>Barang</span></a></li>
 
         @endif
 

@@ -3,10 +3,10 @@
 @section('content')
   <section class="section">
     <div class="section-header">
-      <h1>Daftar Pengguna</h1>
+      <h1>Daftar Barang</h1>
       <div class="section-header-breadcrumb">
         <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-        <div class="breadcrumb-item">Daftar Pengguna</div>
+        <div class="breadcrumb-item">Daftar Barang</div>
       </div>
     </div>
 
@@ -25,8 +25,10 @@
                   <thead>
                       <tr>
                         <th>No</th>
-                        <th>Name</th>
-                        <th>Email</th>
+                        <th>Kode</th>
+                        <th>Nama</th>
+                        <th>Stok</th>
+                        <th>Status</th>
                         <th>#</th>
                       </tr>
                   </thead>
@@ -39,22 +41,26 @@
     </div>
   </section>
 
-  <!-- Modal Add New user -->
+  <!-- Modal Add New barang -->
   <div class="modal fade" id="addNewDataModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <form id="newDataForm">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Tambah Pengguna</h5>
+            <h5 class="modal-title" id="exampleModalLongTitle">Tambah Barang</h5>
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <label>Nama</label>
-              <input type="text" name="name" class="form-control" required="">
+              <label>Kode</label>
+              <input type="text" name="kode" class="form-control" required="">
             </div>
             <div class="form-group">
-              <label>Email</label>
-              <input type="text" name="email" class="form-control" required="">
+              <label>Nama</label>
+              <input type="text" name="nama" class="form-control" required="">
+            </div>
+            <div class="form-group">
+              <label>Stok</label>
+              <input type="number" name="stok" class="form-control" required="">
             </div>
           </div>
           <div class="modal-footer">
@@ -66,27 +72,35 @@
     </div>
   </div>
 
-  <!-- Modal Edit user -->
+  <!-- Modal Edit barang -->
   <div class="modal fade" id="editDataModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <form id="editDataForm">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Ubah Pengguna</h5>
+            <h5 class="modal-title" id="exampleModalLongTitle">Ubah Barang</h5>
           </div>
           <div class="modal-body">
             <input type="hidden" id="editDataId">
             <div class="form-group">
+              <label>Kode</label>
+              <input type="text" id="kode" name="kode" class="form-control" required="">
+            </div>
+            <div class="form-group">
               <label>Nama</label>
-              <input type="text" id="name" name="name" class="form-control" required="">
+              <input type="text" id="nama" name="nama" class="form-control" required="">
             </div>
             <div class="form-group">
-              <label>Email</label>
-              <input type="text" id="email" name="email" class="form-control" required="">
+              <label>Stok</label>
+              <input type="number" id="stok" name="stok" class="form-control" required="">
             </div>
             <div class="form-group">
-              <label>Password</label>
-              <input type="password" id="password" name="password" class="form-control">
+              <label>Status</label>
+              <select id="status" name="status" class="custom-select" required>
+                <option value="">Pilih</option>
+                <option value="aktif">Aktif</option>
+                <option value="tidak-aktif">Tidak Aktif</option>
+              </select>
             </div>
           </div>
           <div class="modal-footer">
@@ -110,25 +124,27 @@
         processing: true,
         serverSide: false,
         autoWidth: false,
-        ajax: "{{ route('pengguna.datatable') }}",
+        ajax: "{{ route('barang.datatable') }}",
         columns: [
           {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-          {data: 'name', name: 'name'},
-          {data: 'email', name: 'email'},
+          {data: 'kode', name: 'kode'},
+          {data: 'nama', name: 'nama'},
+          {data: 'stok', name: 'stok'},
+          {data: 'status', name: 'status'},
 
           {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         columnDefs: [
-          { className: "dt-center", targets: [ 0, 1, 2, 3 ] }
+          { className: "dt-center", targets: [ 0, 1, 2, 3, 4, 5 ] }
         ]
       });
 
-      // /*------------------------------------------ Show modal button add new user --------------------------------------------*/ 
+      // /*------------------------------------------ Show modal button add new barang --------------------------------------------*/ 
       $('#showAddModalBtn').click(function () {
         $('#addNewDataModal').modal('show');
       });
 
-      // /*------------------------------------------ Create new user --------------------------------------------*/ 
+      // /*------------------------------------------ Create new barang --------------------------------------------*/ 
       $('#newDataForm').submit(function (e) {
         e.preventDefault();
         $('#confirmAddBtn').html('Menyimpan...');
@@ -139,7 +155,7 @@
 
         $.ajax({
           data: $('#newDataForm').serialize(),
-          url: "{{ route('pengguna.store') }}",
+          url: "{{ route('barang.store') }}",
           type: "POST",
           dataType: 'json',
           success: function (data) {
@@ -177,28 +193,32 @@
         });
       });
 
-      // /*------------------------------------------ Show modal button edit user --------------------------------------------*/
+      // /*------------------------------------------ Show modal button edit barang --------------------------------------------*/
       $(document).on('click', '.show-edit-modal', function () {
         $('#editDataModal').modal('show');
 
         let dataId = $(this).data('id');
-        let name = $(this).data('name');
-        let email = $(this).data('email');
+        let kode = $(this).data('kode');
+        let nama = $(this).data('nama');
+        let stok = $(this).data('stok');
+        let status = $(this).data('status');
 
         $('#editDataModal').modal('show');
 
         $('#editDataId').val(dataId);
-        $('#name').val(name);
-        $('#email').val(email);
+        $('#kode').val(kode);
+        $('#nama').val(nama);
+        $('#stok').val(stok);
+        $('#status').val(status);
       });
 
-      // /*------------------------------------------ Edit data user --------------------------------------------*/ 
+      // /*------------------------------------------ Edit data barang --------------------------------------------*/ 
       $('#editDataForm').submit(function (e) {
         e.preventDefault();
         $('#confirmEditBtn').html('Menyimpan...');
       
         let dataId = $('#editDataId').val();
-        let url = '{{ route('pengguna.update', ':id') }}'; url = url.replace(':id', dataId);
+        let url = '{{ route('barang.update', ':id') }}'; url = url.replace(':id', dataId);
 
         // disable button while editing
         $("#confirmEditBtn").prop("disabled",true); 
