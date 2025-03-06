@@ -14,5 +14,6 @@
 
         @endif
 
+        <li class="{{ request()->segment(1) == 'pengaturan' ? 'active' : '' }}"><a class="nav-link" href="{{ route('pengaturan.index') }}"><i class="fas fa-cog"></i> <span>Pengaturan</span></a></li>
     </ul> 
 </aside>

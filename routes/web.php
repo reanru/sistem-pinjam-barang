@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     HomeController,
     UserController,
-    BarangController
+    BarangController,
+    PengaturanController
 };
 
 // use PDF;
@@ -32,6 +33,8 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::resource('/barang', BarangController::class);
     Route::get('datatable-barang', [BarangController::class, 'datatable'])->name('barang.datatable');
+
+    Route::resource('/pengaturan', PengaturanController::class);
 });
 
 
