@@ -11,6 +11,7 @@
 
             <li class="{{ request()->segment(1) == 'pengguna' ? 'active' : '' }}"><a class="nav-link" href="{{ route('pengguna.index') }}"><i class="fas fa-square"></i> <span>Pengguna</span></a></li>
             <li class="{{ request()->segment(1) == 'barang' ? 'active' : '' }}"><a class="nav-link" href="{{ route('barang.index') }}"><i class="fas fa-square"></i> <span>Barang</span></a></li>
+            <li class="{{ request()->segment(1) == 'peminjaman-barang' ? 'active' : '' }}"><a class="nav-link" href="{{ route('peminjaman-barang.index') }}"><i class="fas fa-square"></i> <span>Peminjaman</span></a></li>
 
         @endif
 

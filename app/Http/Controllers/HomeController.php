@@ -20,7 +20,7 @@ class HomeController extends Controller
     {
 
         if(Auth::user()->role === 'admin'){     
-            return view('home', compact());
+            return view('home');
         }
 
         if(Auth::user()->role === 'pengguna'){     

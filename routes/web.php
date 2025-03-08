@@ -7,7 +7,8 @@ use App\Http\Controllers\{
     BarangController,
     PengaturanController,
     RiwayatPeminjamanController,
-    DaftarBarangController
+    DaftarBarangController,
+    PeminjamanBarangController
 };
 
 // use PDF;
@@ -43,6 +44,11 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::resource('/daftar-barang', DaftarBarangController::class);
     Route::get('datatable-daftar-barang', [DaftarBarangController::class, 'datatable'])->name('daftar-barang.datatable');
+
+    Route::resource('/peminjaman-barang', PeminjamanBarangController::class);
+    Route::get('datatable-peminjaman-barang', [PeminjamanBarangController::class, 'datatable'])->name('peminjaman-barang.datatable');
+
+    Route::get('/user/search', [PeminjamanBarangController::class, 'search']);
 });
 
 

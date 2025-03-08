@@ -21,6 +21,13 @@
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        <style>
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                padding-top: 6px;  /* Atur padding atas */
+                padding-bottom: 6px; /* Atur padding bawah */
+            }
+        </style>
+
     </head>
 
     <body>
@@ -87,6 +94,9 @@
         <!-- Datatables -->
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
         {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script> --}}
 
