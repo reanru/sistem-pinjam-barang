@@ -3,10 +3,10 @@
 @section('content')
   <section class="section">
     <div class="section-header">
-      <h1>Riwayat Peminjaman</h1>
+      <h1>Daftar Barang</h1>
       <div class="section-header-breadcrumb">
         <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-        <div class="breadcrumb-item">Riwayat Peminjaman</div>
+        <div class="breadcrumb-item">Daftar Barang</div>
       </div>
     </div>
 
@@ -20,11 +20,9 @@
                   <thead>
                       <tr>
                         <th>No</th>
-                        <th>Kode Barang</th>
+                        <th>Kode</th>
                         <th>Nama</th>
-                        <th>Mulai</th>
-                        <th>Selesai</th>
-                        <th>Deskripsi</th>
+                        <th>Stok</th>
                         <th>Status</th>
                       </tr>
                   </thead>
@@ -49,20 +47,18 @@
         processing: true,
         serverSide: false,
         autoWidth: false,
-        ajax: "{{ route('riwayat-peminjaman.datatable') }}",
+        ajax: "{{ route('daftar-barang.datatable') }}",
         columns: [
           {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-          {data: 'kode_barang', name: 'kode_barang'},
-          {data: 'nama_barang', name: 'nama_barang'},
-          {data: 'mulai', name: 'mulai'},
-          {data: 'selesai', name: 'selesai'},
-          {data: 'deskripsi', name: 'deskripsi'},
+          {data: 'kode', name: 'kode'},
+          {data: 'nama', name: 'nama'},
+          {data: 'stok', name: 'stok'},
           {data: 'status', name: 'status'},
 
           // {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         columnDefs: [
-          { className: "dt-center", targets: [ 0, 1, 2, 3, 4, 5, 6 ] }
+          { className: "dt-center", targets: [ 0, 1, 2, 3, 4 ] }
         ]
       });
 

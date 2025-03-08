@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PeminjamanBarang;
-use DB, DataTables, Validator;
+use DB, Auth, DataTables, Validator;
 
 class RiwayatPeminjamanController extends Controller
 {
@@ -47,6 +47,7 @@ class RiwayatPeminjamanController extends Controller
     public function datatable(){
         // mengambil data
         $data = DB::table('peminjaman_barang')
+                        ->where('user_id', Auth::id())
                         ->orderBy('created_at', 'DESC')
                         ->select(
                             'id',
