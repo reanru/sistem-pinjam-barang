@@ -30,31 +30,31 @@
                         </div>
                     </div>
                     
-                    <div class="card">
-                        <div class="card-header">
-                            <strong>Ubah Profile</strong>                        
+                    @if(Auth::user()->role !== 'admin')
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>Ubah Profile</strong>                        
+                            </div>
+                            <div class="card-body p-4">
+                                <form method="POST" action="{{ route('pengaturan.update', $data->id) }}">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <div class="form-group">
+                                        <label for="name">Nama</label>
+                                        <input type="text" class="form-control" value="{{$data->name ?? ''}}" name="name" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="name">No HP</label>
+                                        <input type="text" class="form-control" value="{{$data->no_hp ?? ''}}" name="no_hp" required>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </form>
+                            </div>
                         </div>
-                        <div class="card-body p-4">
-                            <form method="POST" action="{{ route('pengaturan.update', $data->id) }}">
-                                @csrf
-                                @method('PUT')
-
-                                <div class="form-group">
-                                    <label for="name">Nama</label>
-                                    <input type="text" class="form-control" value="{{$data->name ?? ''}}" name="name" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="name">No HP</label>
-                                    <input type="text" class="form-control" value="{{$data->no_hp ?? ''}}" name="no_hp" required>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </form>
-                        </div>
-                    </div>
-                    {{-- @if(Auth::user()->role !== 'admin')
-                    @endif --}}
+                    @endif
 
                 </div>
             </div>

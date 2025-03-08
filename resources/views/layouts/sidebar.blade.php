@@ -14,6 +14,12 @@
 
         @endif
 
+        @if(Auth::user()->role == 'pengguna')
+
+            <li class="{{ request()->segment(1) == 'riwayat-peminjaman' ? 'active' : '' }}"><a class="nav-link" href="{{ route('riwayat-peminjaman.index') }}"><i class="fas fa-square"></i> <span>Riwayat Peminjaman</span></a></li>
+
+        @endif
+
         <li class="{{ request()->segment(1) == 'pengaturan' ? 'active' : '' }}"><a class="nav-link" href="{{ route('pengaturan.index') }}"><i class="fas fa-cog"></i> <span>Pengaturan</span></a></li>
     </ul> 
 </aside>
