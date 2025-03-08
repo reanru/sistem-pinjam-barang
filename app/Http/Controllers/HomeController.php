@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Barang;
+use App\Models\PeminjamanBarang;
 use Auth, DB, Carbon\Carbon;
 
 class HomeController extends Controller
@@ -17,9 +19,15 @@ class HomeController extends Controller
     public function index()
     {
 
-        return view('home');
-        // if(Auth::user()->role === 'admin'){     
-        // }
+        if(Auth::user()->role === 'admin'){     
+            return view('home', compact());
+        }
 
+        if(Auth::user()->role === 'pengguna'){     
+            $countBarang = Barang::count();
+            $countRiwayatPeminjamanBarang = PeminjamanBarang::where('user_id', Auth::id())->count();
+
+            return view('home', compact('countBarang','countRiwayatPeminjamanBarang'));
+        }
     }
 }
