@@ -13,4 +13,7 @@ class PeminjamanBarang extends Model
 
     public $timestamps = true;
     protected $table = "peminjaman_barang";
+    protected $fillable = [
+        'id','user_id','barang_id','no_hp','kode_barang','nama_barang','mulai','selesai','deskripsi','status'
+    ];
 }

@@ -11,6 +11,18 @@
     </div>
 
     <div class="section-body">
+
+      <div class="alert alert-light alert-has-icon">
+        <div class="alert-icon"><i class="fas fa-info-circle"></i></div>
+        <div class="alert-body">
+          <div class="alert-title">Informasi</div>
+          <ul style="margin-left: -20px; margin-bottom: 0px">
+            <li>Jika sementara meminjam barang A, tidak dapat meminjam barang yang sama tapi bisa meminjam barang lain.</li>
+            <li>Jika sementara meminjam barang A (telah melewati batas peminjaman dan belum dikembalikan), tidak boleh meminjam barang lain.</li>
+          </ul> 
+        </div>
+      </div>
+
       <div class="row">
         <div class="col-12">
           <div class="card">
@@ -32,6 +44,7 @@
                         <th>Selesai</th>
                         <th>Deskripsi</th>
                         <th>Status</th>
+                        <th>#</th>
                       </tr>
                   </thead>
                 </table>
@@ -49,21 +62,43 @@
       <div class="modal-content">
         <form id="newDataForm">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Tambah Barang</h5>
+            <h5 class="modal-title" id="exampleModalLongTitle">Buat Permintaan</h5>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-              <label>Kode</label>
-              <input type="text" name="kode" class="form-control" required="">
-            </div>
-            <div class="form-group">
-              <label>Nama</label>
-              <input type="text" name="nama" class="form-control" required="">
-            </div>
-            <div class="form-group">
-              <label>Stok</label><br>
-              <select id="category" class="form-control" name="user_id" required=""></select>
 
+            <div class="form-group">
+              <label>Pengguna <span style="color: red">*</span></label><br>
+              <select id="pengguna" class="form-control" name="user_id" required=""></select>
+            </div>
+
+            <div class="form-group">
+              <label>No HP  <span style="color: gray; font-size: 10px">(Bisa Diubah) <span style="color: red">*</span></label>
+              <input type="text" id="noHp" name="no_hp" class="form-control" required="">
+            </div>
+
+            <div class="form-group">
+              <label>Barang <span style="color: red">*</span></label><br>
+              <select class="form-control" name="barang" required="">
+                <option value="">Pilih</option>
+                @foreach ($daftarBarang as $item)
+                  <option value="{{$item->id}}~{{$item->kode}}~{{$item->nama}}">{{$item->kode}} ~ {{$item->nama}} (Stok : {{$item->stok}})</option>
+                @endforeach
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Mulai <span style="color: red">*</span></label>
+              <input type="date" name="mulai" class="form-control" required="">
+            </div>
+
+            <div class="form-group">
+              <label>Selesai <span style="color: red">*</span></label>
+              <input type="date" name="selesai" class="form-control" required="">
+            </div>
+
+            <div class="form-group">
+              <label>Keterangan <span style="color: gray; font-size: 10px">(Opsional)</span></label>
+              <textarea type="text" name="deskripsi" class="form-control"></textarea>
             </div>
 
           </div>
@@ -83,11 +118,11 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5>Hapus Jadwal</h5>
+          <h5>Batal Permintaan</h5>
         </div>
         <div class="modal-body">
           <input type="hidden" id="deleteDataId">
-          Anda yakin akan menghapus?
+          Anda yakin akan membatalkan permintaan ini?
         </div>
         <div class="modal-footer">
           <button type="button" id="closeDeleteBtn" class="btn btn-secondary" data-dismiss="modal">Tidak</button>
@@ -121,152 +156,162 @@
           {data: 'deskripsi', name: 'deskripsi'},
           {data: 'status', name: 'status'},
 
-          // {data: 'action', name: 'action', orderable: false, searchable: false},
+          {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         columnDefs: [
           { className: "dt-center", targets: [ 0, 1, 2, 3, 4, 5, 6, 7 ] }
         ]
       });
 
-    });
-
-    // /*------------------------------------------ Show modal button add new peminjaman --------------------------------------------*/ 
-    $('#showAddModalBtn').click(function () {
-      $('#addNewDataModal').modal('show');
-    });
-
-    // /*------------------------------------------ Create new peminjaman --------------------------------------------*/ 
-    $('#newDataForm').submit(function (e) {
-      e.preventDefault();
-      $('#confirmAddBtn').html('Menyimpan...');
-    
-      // disable button while editing
-      $("#confirmAddBtn").prop("disabled",true); 
-      $("#closeAddBtn").prop("disabled",true);
-
-      $.ajax({
-        data: $('#newDataForm').serialize(),
-        url: "{{ route('peminjaman-barang.store') }}",
-        type: "POST",
-        dataType: 'json',
-        success: function (data) {
-          $('#newDataForm').trigger("reset");
-          $('#addNewDataModal').modal('hide');
-          table.ajax.reload();
-          Swal.fire({
-            title: 'Berhasil',
-            text: 'Data berhasil disimpan',
-            icon: 'success',
-            confirmButtonText: 'OK'
-          })
-        },
-        error: function (data) {
-          let html = "";
-          const { status, message } = data.responseJSON;
-
-          for (const key in message) {
-            html += `<p style="">${message[key]}</p>`
+      // /*------------------------------------------ Show modal button add new peminjaman --------------------------------------------*/ 
+      $('#showAddModalBtn').click(function () {
+        $('#addNewDataModal').modal('show');
+      });
+  
+      // /*------------------------------------------ Create new peminjaman --------------------------------------------*/ 
+      $('#newDataForm').submit(function (e) {
+        e.preventDefault();
+        $('#confirmAddBtn').html('Menyimpan...');
+      
+        // disable button while editing
+        $("#confirmAddBtn").prop("disabled",true); 
+        $("#closeAddBtn").prop("disabled",true);
+  
+        $.ajax({
+          data: $('#newDataForm').serialize(),
+          url: "{{ route('peminjaman-barang.store') }}",
+          type: "POST",
+          dataType: 'json',
+          success: function (data) {
+            $('#pengguna').val(null).trigger('change'); // select2 library
+            
+            $('#newDataForm').trigger("reset");
+            $('#addNewDataModal').modal('hide');
+            table.ajax.reload();
+            Swal.fire({
+              title: 'Berhasil',
+              text: 'Data berhasil disimpan',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            })
+          },
+          error: function (data) {
+            let html = "";
+            const { status, message } = data.responseJSON;
+            
+            for (const key in message) {
+              html += `<p style="">${message[key]}</p>`
+            }
+            // console.log('check ', status, ' - ', message, ' - ', html);
+            Swal.fire({
+              title: 'Terjadi kesalahan',
+              html: status === 'validation error' ? html : message,
+              icon: status === 'validation error' || status === 'warning' ? 'warning' : 'error',
+              confirmButtonText: 'OK'
+            })
+          },
+          complete: function(data) {
+            $('#confirmAddBtn').html('Simpan');
+  
+            // enable button
+            $("#confirmAddBtn").prop("disabled",false); 
+            $("#closeAddBtn").prop("disabled",false);
           }
-          Swal.fire({
-            title: 'Terjadi kesalahan',
-            html: status === 'validation error' ? html : message,
-            icon: status === 'validation error' || status === 'warning' ? 'warning' : 'error',
-            confirmButtonText: 'OK'
-          })
-        },
-        complete: function(data) {
-          $('#confirmAddBtn').html('Simpan');
-
-          // enable button
-          $("#confirmAddBtn").prop("disabled",false); 
-          $("#closeAddBtn").prop("disabled",false);
-        }
+        });
       });
-    });
-
-    // /*------------------------------------------ Show modal delete peminjaman --------------------------------------------*/ 
-    $(document).on('click', '.show-delete-modal', function () {
-      $('#deleteDataModal').modal('show');
-      $('#deleteDataId').val($(this).data("id"));
-    });
-
-    // /*------------------------------------------ Delete data peminjaman --------------------------------------------*/ 
-    $('#confirmDeleteBtn').click(function (e) {
-      $(this).html('Menghapus...');
-
-      let dataId = $('#deleteDataId').val();
-      let url = '{{ route('peminjaman-barang.destroy', ':id') }}'; url = url.replace(':id', dataId);
-
-      // disable button while deleting
-      $("#confirmDeleteBtn").prop("disabled",true); 
-      $("#closeDeleteBtn").prop("disabled",true);
-
-      $.ajax({
-        type: "DELETE",
-        url : url,
-        success: function (data) {
-          $('#deleteDataModal').modal('hide');
-          table.ajax.reload();
-          Swal.fire({
-            title: 'Berhasil',
-            text: 'Jadwal berhasil dihapus',
-            icon: 'success',
-            confirmButtonText: 'OK'
-          })
-        },
-        error: function (data) {
-          const { status, message } = data.responseJSON;
-          Swal.fire({
-            title: 'Terjadi kesalahan',
-            text: message,
-            icon: 'error',
-            confirmButtonText: 'OK'
-          })
-        },
-        complete: function(data) {
-          $('#confirmDeleteBtn').html('Ya'); 
-
-          // enable button
-          $("#confirmDeleteBtn").prop("disabled",false);
-          $("#closeDeleteBtn").prop("disabled",false);
-        }
+  
+      // /*------------------------------------------ Show modal delete peminjaman --------------------------------------------*/ 
+      $(document).on('click', '.show-delete-modal', function () {
+        $('#deleteDataModal').modal('show');
+        $('#deleteDataId').val($(this).data("id"));
       });
-    });
-
-
-    $(document).ready(function() {
-      $('#category').select2({
-          width: '100%',
-          dropdownParent: $('#addNewDataModal'),
-          minimumInputLength: 3,
-          placeholder: "Cari nama pengguna...",
-          allowClear: true, 
-          ajax: {
-              url: '/user/search',
-              dataType: 'json',
-              delay: 250,
-              data: function (params) {
-                  return {
-                      q: params.term
-                  };
-              },
-              processResults: function (data) {
-                  return {
-                      results: $.map(data, function (item) {
-                          return {
-                              text: item.name,
-                              id: item.id,
-                          };
-                      })
-                  };
-              },
-              cache: true
+  
+      // /*------------------------------------------ Delete data peminjaman --------------------------------------------*/ 
+      $('#confirmDeleteBtn').click(function (e) {
+        $(this).html('Menghapus...');
+  
+        let dataId = $('#deleteDataId').val();
+        let url = '{{ route('peminjaman-barang.destroy', ':id') }}'; url = url.replace(':id', dataId);
+  
+        // disable button while deleting
+        $("#confirmDeleteBtn").prop("disabled",true); 
+        $("#closeDeleteBtn").prop("disabled",true);
+  
+        $.ajax({
+          type: "DELETE",
+          url : url,
+          success: function (data) {
+            $('#deleteDataModal').modal('hide');
+            table.ajax.reload();
+            Swal.fire({
+              title: 'Berhasil',
+              text: 'Permintaan berhasil dibatalkan',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            })
+          },
+          error: function (data) {
+            const { status, message } = data.responseJSON;
+            Swal.fire({
+              title: 'Terjadi kesalahan',
+              text: message,
+              icon: 'error',
+              confirmButtonText: 'OK'
+            })
+          },
+          complete: function(data) {
+            $('#confirmDeleteBtn').html('Ya'); 
+  
+            // enable button
+            $("#confirmDeleteBtn").prop("disabled",false);
+            $("#closeDeleteBtn").prop("disabled",false);
           }
+        });
       });
-      $('#category').on('change', function() {
-          var selectedValue = $(this).val();
-          console.log("ID kategori yang dipilih:", selectedValue);
+  
+  
+      $(document).ready(function() {
+        $('#pengguna').select2({
+            width: '100%',
+            dropdownParent: $('#addNewDataModal'),
+            minimumInputLength: 3,
+            placeholder: "Cari nama pengguna...",
+            allowClear: true, 
+            ajax: {
+                url: '/user/search',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item.name,
+                                id: `${item.id}~${item.no_hp}`,
+                            };
+                        })
+                    };
+                },
+                // cache: true
+            }
+        });
+  
+        $('#pengguna').on('change', function() {
+            var selectedValue = $(this).val();
+            // console.log("ID kategori yang dipilih:", selectedValue.split("~")[0]);
+  
+            if(selectedValue){
+              $('#noHp').val(selectedValue.split("~")[1]);
+            }else{
+              $('#noHp').val('');
+            }
+        });
       });
-  });
+    });
+
   </script>
 @endpush
