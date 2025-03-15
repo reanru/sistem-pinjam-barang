@@ -8,7 +8,8 @@ use App\Http\Controllers\{
     PengaturanController,
     RiwayatPeminjamanController,
     DaftarBarangController,
-    PeminjamanBarangController
+    PeminjamanBarangController,
+    StatusPeminjamanController
 };
 
 // use PDF;
@@ -47,6 +48,8 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::resource('/peminjaman-barang', PeminjamanBarangController::class);
     Route::get('datatable-peminjaman-barang', [PeminjamanBarangController::class, 'datatable'])->name('peminjaman-barang.datatable');
+
+    Route::resource('/status-peminjaman', StatusPeminjamanController::class);
 
     Route::get('/user/search', [PeminjamanBarangController::class, 'search']);
 });

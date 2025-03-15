@@ -33,6 +33,7 @@ class PeminjamanBarangController extends Controller
                 'barang' => 'required',
                 'mulai' => 'required',
                 'selesai' => 'required',
+                'deskripsi' => 'required',
             ];
     
             $messages  = [
@@ -41,6 +42,7 @@ class PeminjamanBarangController extends Controller
                 'barang.required' => 'Barang : Tidak boleh kosong.',
                 'mulai.required' => 'Mulai : Tidak boleh kosong.',
                 'selesai.required' => 'Selesai : Tidak boleh kosong.',
+                'deskripsi.required' => 'Keterangan : Tidak boleh kosong.',
             ];
             
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -49,9 +51,14 @@ class PeminjamanBarangController extends Controller
                 return response()->json(['status'=>'validation error','message'=>$validator->messages()],400);
             }else{    
                 // return response()->json(['status'=>'success', 'test'=>$request->all()],500); 
-
+                
                 $pengguna = explode("~",$request->user_id);
                 $barang = explode("~",$request->barang);
+                
+                $checkStok = Barang::where('id', $barang[0])->first();
+                if($checkStok->stok <= 0){
+                    return response()->json(['status'=>'validation error','message'=>['Stok barang tidak tersedia.']],400);
+                }
 
                 // jika sementara meminjam barang A, tidak boleh meminjam barang yang sama
                 $check1 = PeminjamanBarang::where('user_id',$pengguna[0])->where('barang_id',$barang[0])->where('status','sementara')->first();
@@ -77,6 +84,9 @@ class PeminjamanBarangController extends Controller
                     'deskripsi' => $request->deskripsi,
                     'status' => 'sementara'
                 ]);
+
+                $barang = Barang::where('id',$barang[0])->first();
+                $barang->update(['stok' => $barang->stok - 1]);
 
                 DB::commit();
                 return response()->json(['status'=>'success', 'message'=>'Berhasil disimpan.'],200);
@@ -121,8 +131,12 @@ class PeminjamanBarangController extends Controller
                     'status' => $request->status,
                 ];
 
-                PeminjamanBarang::where('id',$id)->update($data);
+                $peminjamanBarang = PeminjamanBarang::where('id',$id)->first();
+                $peminjamanBarang->update($data);
     
+                $barang = Barang::where('id',$peminjamanBarang->barang_id)->first();
+                $barang->update(['stok' => $barang->stok + 1]);
+
                 DB::commit();
                 return response()->json(['status'=>'success', 'message'=>'Berhasil mengubah status peminjaman.'],200);
             }

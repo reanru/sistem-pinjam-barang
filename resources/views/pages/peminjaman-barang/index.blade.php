@@ -100,8 +100,8 @@
             </div>
 
             <div class="form-group">
-              <label>Keterangan <span style="color: gray; font-size: 10px">(Opsional)</span></label>
-              <textarea type="text" name="deskripsi" class="form-control"></textarea>
+              <label>Keterangan <span style="color: red">*</span></label>
+              <textarea type="text" name="deskripsi" class="form-control" required=""></textarea>
             </div>
 
             <div class="text-right">
@@ -126,6 +126,14 @@
             <h5 class="modal-title" id="exampleModalLongTitle">Ubah Status Peminjaman</h5>
           </div>
           <div class="modal-body">
+            <div class="alert alert-warning alert-has-icon">
+              <div class="alert-icon"><i class="fas fa-info-circle"></i></div>
+              <div class="alert-body">
+                <div class="alert-title">Informasi</div>
+                <span>Status hanya bisa diubah satu kali.</span>
+              </div>
+            </div>
+
             <input type="hidden" id="editDataId">
             <div class="form-group">
               <label>Status</label>

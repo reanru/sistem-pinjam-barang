@@ -18,6 +18,7 @@
         @if(Auth::user()->role == 'pengguna')
 
             <li class="{{ request()->segment(1) == 'daftar-barang' ? 'active' : '' }}"><a class="nav-link" href="{{ route('daftar-barang.index') }}"><i class="fas fa-square"></i> <span>Daftar Barang</span></a></li>
+            <li class="{{ request()->segment(1) == 'status-peminjaman' ? 'active' : '' }}"><a class="nav-link" href="{{ route('status-peminjaman.index') }}"><i class="fas fa-square"></i> <span>Status Peminjaman</span></a></li>
             <li class="{{ request()->segment(1) == 'riwayat-peminjaman' ? 'active' : '' }}"><a class="nav-link" href="{{ route('riwayat-peminjaman.index') }}"><i class="fas fa-square"></i> <span>Riwayat Peminjaman</span></a></li>
 
         @endif
