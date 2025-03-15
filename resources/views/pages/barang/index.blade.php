@@ -62,10 +62,10 @@
               <label>Stok</label>
               <input type="number" name="stok" class="form-control" required="">
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="closeAddBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="submit" id="confirmAddBtn" class="btn btn-primary" >Simpan</button>
+            <div class="text-right">
+              <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+              <button type="submit" id="confirmEditBtn" class="btn btn-primary">Simpan</button>
+            </div>
           </div>
         </form>
       </div>
@@ -102,10 +102,10 @@
                 <option value="tidak-aktif">Tidak Aktif</option>
               </select>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="submit" id="confirmEditBtn" class="btn btn-primary">Simpan</button>
+            <div class="text-right">
+              <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+              <button type="submit" id="confirmEditBtn" class="btn btn-primary">Simpan</button>
+            </div>
           </div>
         </form>
       </div>

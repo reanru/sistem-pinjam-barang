@@ -61,10 +61,10 @@
               <label>No HP</label>
               <input type="text" name="no_hp" class="form-control" required="">
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="closeAddBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="submit" id="confirmAddBtn" class="btn btn-primary" >Simpan</button>
+            <div class="text-right">
+              <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+              <button type="submit" id="confirmEditBtn" class="btn btn-primary">Simpan</button>
+            </div>
           </div>
         </form>
       </div>
@@ -97,10 +97,10 @@
               <label>Password</label>
               <input type="password" id="password" name="password" class="form-control">
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="submit" id="confirmEditBtn" class="btn btn-primary">Simpan</button>
+            <div class="text-right">
+              <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+              <button type="submit" id="confirmEditBtn" class="btn btn-primary">Simpan</button>
+            </div>
           </div>
         </form>
       </div>
