@@ -68,7 +68,10 @@
 
             <div class="form-group">
               <label>Pengguna <span style="color: red">*</span></label><br>
-              <select id="pengguna" class="form-control" name="user_id" required=""></select>
+              <div id="formContainer">
+                <select id="pengguna" class="form-control" name="user_id" required=""></select>
+              </div>
+
             </div>
 
             <div class="form-group">
@@ -101,11 +104,12 @@
               <textarea type="text" name="deskripsi" class="form-control"></textarea>
             </div>
 
+            <div class="text-right">
+              <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+              <button type="submit" id="confirmEditBtn" class="btn btn-primary">Simpan</button>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" id="closeAddBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="submit" id="confirmAddBtn" class="btn btn-primary" >Simpan</button>
-          </div>
+
         </form>
 
 
@@ -113,25 +117,33 @@
     </div>
   </div>
 
-  <!-- Modal Delete Jadwal -->
-  <div class="modal fade" id="deleteDataModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+  <!-- Modal Edit peminjaman -->
+  <div class="modal fade" id="editDataModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5>Batal Permintaan</h5>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="deleteDataId">
-          Anda yakin akan membatalkan permintaan ini?
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="closeDeleteBtn" class="btn btn-secondary" data-dismiss="modal">Tidak</button>
-          <button type="button" id="confirmDeleteBtn" class="btn btn-primary">Ya</button>
-        </div>
+        <form id="editDataForm">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Ubah Status Peminjaman</h5>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editDataId">
+            <div class="form-group">
+              <label>Status</label>
+              <select id="status" name="status" class="custom-select" required>
+                <option value="">Pilih</option>
+                <option value="dibatalkan">Dibatalkan</option>
+                <option value="selesai">Selesai</option>
+              </select>
+            </div>
+            <div class="text-right">
+              <button type="button" id="closeEditBtn" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+              <button type="submit" id="confirmEditBtn" class="btn btn-primary">Simpan</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-
 
 @endsection
 
@@ -182,9 +194,56 @@
           url: "{{ route('peminjaman-barang.store') }}",
           type: "POST",
           dataType: 'json',
-          success: function (data) {
-            $('#pengguna').val(null).trigger('change'); // select2 library
-            
+          success: function (data) {            
+            // Hapus elemen Select2 yang ada
+            $('#pengguna').select2('destroy').remove();
+
+            // Buat elemen baru
+            $('#formContainer').append(`
+              <select id="pengguna" class="form-control" name="user_id" required=""></select>
+            `);
+
+            // Inisialisasi Select2 lagi
+            $('#pengguna').select2({
+              width: '100%',
+              dropdownParent: $('#addNewDataModal'),
+              minimumInputLength: 3,
+              placeholder: "Cari nama pengguna...",
+              allowClear: true, 
+              ajax: {
+                  url: '/user/search',
+                  dataType: 'json',
+                  delay: 250,
+                  data: function (params) {
+                      return {
+                          q: params.term
+                      };
+                  },
+                  processResults: function (data) {
+                      return {
+                          results: $.map(data, function (item) {
+                              return {
+                                  text: item.name,
+                                  id: `${item.id}~${item.no_hp}`,
+                              };
+                          })
+                      };
+                  },
+                  // cache: true
+              }
+            });
+
+            $('#pengguna').on('change', function() {
+              var selectedValue = $(this).val();
+              console.log("ID kategori yang dipilih:", selectedValue.split("~")[0]);
+    
+              if(selectedValue){
+                $('#noHp').val(selectedValue.split("~")[1]);
+              }else{
+                $('#noHp').val('');
+              }
+          });
+
             $('#newDataForm').trigger("reset");
             $('#addNewDataModal').modal('hide');
             table.ajax.reload();
@@ -220,51 +279,65 @@
         });
       });
   
-      // /*------------------------------------------ Show modal delete peminjaman --------------------------------------------*/ 
-      $(document).on('click', '.show-delete-modal', function () {
-        $('#deleteDataModal').modal('show');
-        $('#deleteDataId').val($(this).data("id"));
+      // /*------------------------------------------ Show modal button edit peminjaman --------------------------------------------*/
+      $(document).on('click', '.show-edit-modal', function () {
+        $('#editDataModal').modal('show');
+
+        let dataId = $(this).data('id');
+
+        $('#editDataModal').modal('show');
+
+        $('#editDataId').val(dataId);
       });
-  
-      // /*------------------------------------------ Delete data peminjaman --------------------------------------------*/ 
-      $('#confirmDeleteBtn').click(function (e) {
-        $(this).html('Menghapus...');
-  
-        let dataId = $('#deleteDataId').val();
-        let url = '{{ route('peminjaman-barang.destroy', ':id') }}'; url = url.replace(':id', dataId);
-  
-        // disable button while deleting
-        $("#confirmDeleteBtn").prop("disabled",true); 
-        $("#closeDeleteBtn").prop("disabled",true);
-  
+
+      // /*------------------------------------------ Edit data peminjaman --------------------------------------------*/ 
+      $('#editDataForm').submit(function (e) {
+        e.preventDefault();
+        $('#confirmEditBtn').html('Menyimpan...');
+      
+        let dataId = $('#editDataId').val();
+        let url = '{{ route('peminjaman-barang.update', ':id') }}'; url = url.replace(':id', dataId);
+
+        // disable button while editing
+        $("#confirmEditBtn").prop("disabled",true); 
+        $("#closeEditBtn").prop("disabled",true);
+
         $.ajax({
-          type: "DELETE",
-          url : url,
+          data: $('#editDataForm').serialize(),
+          url: url,
+          type: "PUT",
+          dataType: 'json',
           success: function (data) {
-            $('#deleteDataModal').modal('hide');
+            $('#editDataForm').trigger("reset");
+            $('#editDataModal').modal('hide');
             table.ajax.reload();
             Swal.fire({
               title: 'Berhasil',
-              text: 'Permintaan berhasil dibatalkan',
+              text: 'Berhasil disimpan',
               icon: 'success',
               confirmButtonText: 'OK'
             })
           },
           error: function (data) {
+            let html = "";
             const { status, message } = data.responseJSON;
+
+            for (const key in message) {
+              html += `<p style="">${message[key]}</p>`
+            }
             Swal.fire({
               title: 'Terjadi kesalahan',
-              text: message,
-              icon: 'error',
+              html: status === 'validation error' ? html : message,
+              icon: status === 'validation error' || status === 'warning' ? 'warning' : 'error',
               confirmButtonText: 'OK'
             })
           },
           complete: function(data) {
-            $('#confirmDeleteBtn').html('Ya'); 
-  
+            $('#confirmEditBtn').html('Simpan');
+
             // enable button
-            $("#confirmDeleteBtn").prop("disabled",false);
-            $("#closeDeleteBtn").prop("disabled",false);
+            $("#confirmEditBtn").prop("disabled",false); 
+            $("#closeEditBtn").prop("disabled",false);
           }
         });
       });
@@ -302,7 +375,7 @@
   
         $('#pengguna').on('change', function() {
             var selectedValue = $(this).val();
-            // console.log("ID kategori yang dipilih:", selectedValue.split("~")[0]);
+            console.log("ID kategori yang dipilih:", selectedValue.split("~")[0]);
   
             if(selectedValue){
               $('#noHp').val(selectedValue.split("~")[1]);

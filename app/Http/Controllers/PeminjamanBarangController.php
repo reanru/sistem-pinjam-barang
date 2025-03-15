@@ -100,7 +100,37 @@ class PeminjamanBarangController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+
+        // var_dump("check : ", $request->password);
+        try {
+            $rules = [
+                'status' => 'required',
+            ];
+    
+            $messages  = [
+                'status.required' => 'Status : Tidak boleh kosong.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+        
+            if($validator->fails()) {
+                return response()->json(['status'=>'validation error','message'=>$validator->messages()],400);
+            }else{                
+                $data = [
+                    'status' => $request->status,
+                ];
+
+                PeminjamanBarang::where('id',$id)->update($data);
+    
+                DB::commit();
+                return response()->json(['status'=>'success', 'message'=>'Berhasil mengubah status peminjaman.'],200);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return response()->json(['status'=>'failed','message'=>$th->getMessage()],500);
+        }
     }
 
     public function destroy($id)
@@ -176,7 +206,7 @@ class PeminjamanBarangController extends Controller
                     return '
                         <a href="javascript:void(0)" data-toggle="tooltip"
                             data-id="'.$data->id.'" 
-                            data-original-title="Edit" class="edit btn btn-primary btn-sm show-delete-modal"><i class="fas fa-times"></i></a>
+                            data-original-title="Edit" class="edit btn btn-primary btn-sm show-edit-modal"><i class="fas fa-edit"></i></a>
                     ';
                 }else{
                     return '';
