@@ -12,8 +12,8 @@ class StatusPeminjamanController extends Controller
 
     public function index()
     {
-        $daftarPeminjaman = PeminjamanBarang::where('user_id',Auth::id())->get();
-        $cekKadaluarsa = PeminjamanBarang::whereDate('selesai', '<', Carbon::now()->format('Y-m-d'))->count();
+        $daftarPeminjaman = PeminjamanBarang::where('user_id',Auth::id())->where('status','sementara')->get();
+        $cekKadaluarsa = PeminjamanBarang::where('status','sementara')->whereDate('selesai', '<', Carbon::now()->format('Y-m-d'))->count();
 
         foreach ($daftarPeminjaman as $value) {
             $value->kadaluarsa = Carbon::now()->format('Y-m-d') > $value->selesai ? true : false;

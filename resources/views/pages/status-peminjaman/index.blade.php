@@ -22,7 +22,7 @@
                                     <div class="alert-icon"><i class="fas fa-info-circle"></i></div>
                                     <div class="alert-body">
                                         <div class="alert-title">Informasi</div>
-                                        <span>Tidak ada barang yang dipinjam.</span>
+                                        <span>Tidak ada barang yang sementara dipinjam.</span>
                                     </div>
                                 </div>
                             @else

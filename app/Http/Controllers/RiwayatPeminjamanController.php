@@ -77,8 +77,9 @@ class RiwayatPeminjamanController extends Controller
                 return $data->deskripsi;
             })
             ->addColumn('status', function ($data) {
-                if($data->status === 'sementara') return '<h6><span class="badge badge-info">Aktif</span></h6>';
-                else if($data->status === 'selesai') return '<h6><span class="badge badge-warning">Tidak Aktif</span></h6>';
+                if($data->status === 'sementara') return '<h6><span class="badge badge-info">Proses</span></h6>';
+                else if($data->status === 'selesai') return '<h6><span class="badge badge-success">Selesai</span></h6>';
+                else if($data->status === 'dibatalkan') return '<h6><span class="badge badge-warning">Batal</span></h6>';
             })
             // ->addColumn('action', function($data){
             //     return '
