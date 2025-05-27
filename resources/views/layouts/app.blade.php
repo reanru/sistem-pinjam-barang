@@ -21,6 +21,8 @@
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
+
         <style>
             .select2-container--default .select2-selection--single .select2-selection__rendered {
                 padding-top: 6px;  /* Atur padding atas */

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Masuk</title>
+  <title>Layout &rsaquo; Top Navigation &mdash; Stisla</title>
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap/css/bootstrap.min.css') }}">
@@ -43,18 +43,16 @@
           </ul>
 
         </form>
-        <button id="showLoginModalBtn" type="button" class="btn btn-secondary">
+        <button id="showAddModalBtn" type="button" class="btn btn-secondary">
           Masuk
         </button>
       </nav>
 
+
+
       <!-- Main Content -->
       <div class="main-content" >
         <section class="section">
-          <div class="section-header">
-            <h1>Daftar Barang Tersedia</h1>
-
-          </div>
           <div class="row">
             @foreach ($barang as $item)
               <div class="col-12 col-md-4 col-lg-4">
@@ -95,13 +93,12 @@
     </div>
   </div>
 
-  <div class="modal fade" id="loginModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade" id="addNewDataModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
-          @csrf
-          <div class="modal-header justify-content-center">
-            <h5 class="modal-title" id="exampleModalLongTitle">Masuk</h5>
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Tambah Barang</h5>
           </div>
           <div class="modal-body">
             <div class="form-group">
@@ -121,11 +118,10 @@
               </div>
             @enderror  
             <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
+                Masuk
+              </button>
             </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
-              Masuk
-            </button>
-            <button type="button" id="closeEditBtn" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal">Tutup</button>
           </div>
         </form>
       </div>
@@ -161,14 +157,63 @@
   </script>
 
   <script>
-    $(document).ready(function(){
-      $('#loginModal').modal('show');
-    });
+  $('#showAddModalBtn').click(function () {
+    $('#addNewDataModal').modal('show');
+  });
 
-    $('#showLoginModalBtn').click(function () {
-      $('#loginModal').modal('show');
-    });
-  </script>
+// /*------------------------------------------ Create new barang --------------------------------------------*/ 
+$('#newDataForm').submit(function (e) {
+  e.preventDefault();
+  $('#confirmAddBtn').html('Menyimpan...');
+
+  // disable button while editing
+  $("#confirmAddBtn").prop("disabled",true); 
+  $("#closeAddBtn").prop("disabled",true);
+
+  $.ajax({
+    data: $('#newDataForm').serialize(),
+    url: "{{ route('login-baru') }}",
+    type: "POST",
+    dataType: 'json',
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        'Accept': 'application/json' // ⬅️ penting untuk mencegah redirect
+    },
+    success: function (data) {
+      $('#newDataForm').trigger("reset");
+      $('#addNewDataModal').modal('hide');
+      table.ajax.reload();
+      Swal.fire({
+        title: 'Berhasil',
+        text: 'Data berhasil disimpan',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      })
+    },
+    error: function (data) {
+      let html = "";
+      const { status, message } = data.responseJSON;
+
+      for (const key in message) {
+        html += `<p style="">${message[key]}</p>`
+      }
+      Swal.fire({
+        title: 'Terjadi kesalahan',
+        html: status === 'validation error' ? html : message,
+        icon: status === 'validation error' || status === 'warning' ? 'warning' : 'error',
+        confirmButtonText: 'OK'
+      })
+    },
+    complete: function(data) {
+      $('#confirmAddBtn').html('Simpan');
+
+      // enable button
+      $("#confirmAddBtn").prop("disabled",false); 
+      $("#closeAddBtn").prop("disabled",false);
+    }
+  });
+});
+</script>
 
 </body>
 </html>

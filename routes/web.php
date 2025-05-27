@@ -29,6 +29,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 Auth::routes();
 
+Route::get('/masuk', [HomeController::class, 'umum'])->name('umum');
+
+Route::post('/login-baru', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login-baru');
+
 Route::group(['middleware' => ['auth']], function(){
     Route::get('/', [HomeController::class, 'index'])->name('home');
     
