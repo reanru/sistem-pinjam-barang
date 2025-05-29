@@ -82,16 +82,27 @@
               </div>
             @endforeach
           </div>
+
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-12">
+                <div class="card">
+                    <div class="row justify-content-center">
+                        <div class="col-md-12">
+                            <div class="card-body">
+                                <section class="section">
+                                    <div class="section-body" style="width: 100%; height: 100%; max-width: 600px; max-height: 600px;">
+                                        <canvas id="myChart"></canvas>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         </section>
       </div>
-      {{-- <footer class="main-footer">
-        <div class="footer-left">
-          Copyright &copy; 2018 <div class="bullet"></div> Design By <a href="https://nauval.in/">Muhamad Nauval Azhar</a>
-        </div>
-        <div class="footer-right">
-          
-        </div>
-      </footer> --}}
+
     </div>
   </div>
 
@@ -141,6 +152,8 @@
   <script src="{{ asset('assets/modules/moment.min.js') }}"></script>
   <script src="{{ asset('assets/js/stisla.js') }}"></script>
   
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <!-- JS Libraies -->
 
   <!-- Page Specific JS File -->
@@ -169,6 +182,55 @@
       $('#loginModal').modal('show');
     });
   </script>
+
+    <script>
+        let barang = @json($barang)
+
+        console.log('testing ', barang);
+        
+
+        const dataPie = {
+            labels: barang?.map(data=>{return data.nama}),
+            datasets: [{
+                label: 'Stok',
+                data: barang?.map(data=>{return data.stok}),
+            }]
+        };
+
+        const configPie = {
+            type: 'bar',
+            data: dataPie,
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'bottom', // Mengubah posisi legenda ke kanan
+                        labels: {
+                            boxWidth: 15, // Ukuran kotak warna pada legend
+                            maxHeight: 200, // Maksimum tinggi legend
+                        }
+                    },
+                    title: {
+                        display: true, // Menampilkan judul
+                        text: 'Stok Barang', // Teks judul
+                        align: 'start',
+                        font: {
+                            size: 15 // Ukuran font judul
+                        },
+                        color: 'gray', // Warna teks
+                        padding: {
+                            top: 10,
+                            bottom: 10
+                        }
+                    }
+                }
+            }
+        };
+        
+        const myChart = new Chart(
+            document.getElementById('myChart'),
+            configPie
+        );
+    </script>
 
 </body>
 </html>

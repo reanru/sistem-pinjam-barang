@@ -27,11 +27,7 @@ class HomeController extends Controller
             $countRiwayatPeminjamanBarangDibatalkan = PeminjamanBarang::where('status', 'dibatalkan')->count();
             $countRiwayatPeminjamanBarangSelesai = PeminjamanBarang::where('status', 'selesai')->count();
 
-            $stokBarang = Barang::get(['nama','stok']);
-
-            // dd($stokBarang);
-
-            return view('home', compact('stokBarang','countBarang','countUser','countRiwayatPeminjamanBarangSementara','countRiwayatPeminjamanBarangDibatalkan','countRiwayatPeminjamanBarangSelesai'));
+            return view('home', compact('countBarang','countUser','countRiwayatPeminjamanBarangSementara','countRiwayatPeminjamanBarangDibatalkan','countRiwayatPeminjamanBarangSelesai'));
         }
 
         if(Auth::user()->role === 'pengguna'){     
@@ -43,6 +39,7 @@ class HomeController extends Controller
     }
 
     public function umum(){
+        // $stokBarang = Barang::get(['nama','stok']);
         $barang = Barang::get();
         return view('pages.umum.index', compact('barang'));
     }
