@@ -89,3 +89,37 @@
         </div>
     </div>
 </div>
+
+<div class="card">
+    <div class="card-body p-4">
+
+        <h6><strong>Daftar Peminjam Barang (Dalam Proses)</strong></h6>
+
+        <table class="table table-bordered mt-2">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Peminjam</th>
+              <th scope="col">Barang</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php $no = 0; ?>
+            @foreach ($peminjaman as $data)
+                <?php $no++; ?>
+                <tr>
+                    <th scope="row">{{$no}}</th>
+                    <td>{{$data->nama_user ?? '-'}}</td>
+                    <td>
+                        <ul>
+                            @foreach ($data->barang as $item)
+                                <li>{{ $item->nama_barang ?? '-' }} ~ Jumlah : {{ $item->jumlah ?? '-' }}</li>
+                            @endforeach
+                        </ul>  
+                </td>
+                </tr>
+            @endforeach
+          </tbody>
+        </table>
+    </div>
+</div>

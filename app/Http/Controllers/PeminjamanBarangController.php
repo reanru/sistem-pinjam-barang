@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Barang;
+use App\Models\BarangPinjam;
 use App\Models\PeminjamanBarang;
 use Carbon\Carbon;
 use DB, Auth, DataTables, Validator;
@@ -25,6 +26,11 @@ class PeminjamanBarangController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
+
+        // $productsJson = ;
+        // $barangs = json_decode($request->input('barang'), true); // true => array, not object
+
+        // dd($barangs);
 
         try {            
             $rules = [
@@ -52,41 +58,86 @@ class PeminjamanBarangController extends Controller
             }else{    
                 // return response()->json(['status'=>'success', 'test'=>$request->all()],500); 
                 
+                $barangs = json_decode($request->input('barang'), true);
+
+                if(count($barangs) <= 0) return response()->json(['status'=>'validation error','message'=>['Barang : Tidak boleh kosong.']],400);
+
                 $pengguna = explode("~",$request->user_id);
                 $barang = explode("~",$request->barang);
                 
-                $checkStok = Barang::where('id', $barang[0])->first();
-                if($checkStok->stok <= 0){
-                    return response()->json(['status'=>'validation error','message'=>['Stok barang tidak tersedia.']],400);
+                // $checkStok = Barang::where('id', $barang[0])->first();
+                // if($checkStok->stok <= 0){
+                //     return response()->json(['status'=>'validation error','message'=>['Stok barang tidak tersedia.']],400);
+                // }
+
+                foreach ($barangs as $value) {
+                    $checkStok = Barang::where('id', $value['id'])->first();
+                    if($checkStok->stok <= 0){
+                        return response()->json(['status'=>'validation error','message'=>['Stok '.$checkStok->nama.' tidak tersedia.']],400);
+                    }
                 }
+
 
                 // jika sementara meminjam barang A, tidak boleh meminjam barang yang sama
-                $check1 = PeminjamanBarang::where('user_id',$pengguna[0])->where('barang_id',$barang[0])->where('status','sementara')->first();
-                if($check1){
-                    return response()->json(['status'=>'validation error','message'=>['Tidak dapat membuat permintaan, pengguna ini sementara meminjam <strong>'.$barang[2].'</strong>.']],400);
+                // $check1 = PeminjamanBarang::where('user_id',$pengguna[0])->where('barang_id',$barang[0])->where('status','sementara')->first();
+                // if($check1){
+                //     return response()->json(['status'=>'validation error','message'=>['Tidak dapat membuat permintaan, pengguna ini sementara meminjam <strong>'.$barang[2].'</strong>.']],400);
+                // }
+
+
+                // // jika semntara meminjam barang A (sudah lewat batas peminjaman dan belum dikembalikan), tidak boleh meminjam barang lain 
+                // $check2 = PeminjamanBarang::where('user_id',$pengguna[0])->where('status','sementara')->first();
+                // if($check2 !== null && Carbon::now()->format('Y-m-d') > $check2?->selesai){
+                //     return response()->json(['status'=>'validation error','message'=>['Tidak dapat membuat permintaan, pengguna ini sementara meminjam <strong>'.$check2?->nama_barang.'</strong>, dengan kondisi telah melewati batas waktu peminjaman dan belum dikembalikan.']],400);
+                // }
+
+                // jika sementara meminjam barang A, tidak boleh meminjam barang yang sama
+                foreach ($barangs as $value) {
+                    $check1 = BarangPinjam::leftJoin('peminjaman_barang','barang_pinjam.peminjaman_id','peminjaman_barang.id')
+                                                ->where('peminjaman_barang.user_id',$pengguna[0])
+                                                ->where('barang_pinjam.barang_id',$value['id'])
+                                                ->where('peminjaman_barang.status','sementara')->first();
+                    if($check1){
+                        return response()->json(['status'=>'validation error','message'=>['Tidak dapat membuat permintaan, pengguna ini sementara meminjam <strong>'.$value['name'].'</strong>.']],400);
+                    }
                 }
 
+                // // jika semntara meminjam barang A (sudah lewat batas peminjaman dan belum dikembalikan), tidak boleh meminjam barang lain 
+                foreach ($barangs as $value) {
+                
+                    $check2 = BarangPinjam::leftJoin('peminjaman_barang','barang_pinjam.peminjaman_id','peminjaman_barang.id')
+                                                ->where('peminjaman_barang.user_id',$pengguna[0])
+                                                ->where('peminjaman_barang.status','sementara')->first();
 
-                // jika semntara meminjam barang A (sudah lewat batas peminjaman dan belum dikembalikan), tidak boleh meminjam barang lain 
-                $check2 = PeminjamanBarang::where('user_id',$pengguna[0])->where('status','sementara')->first();
-                if($check2 !== null && Carbon::now()->format('Y-m-d') > $check2?->selesai){
-                    return response()->json(['status'=>'validation error','message'=>['Tidak dapat membuat permintaan, pengguna ini sementara meminjam <strong>'.$check2?->nama_barang.'</strong>, dengan kondisi telah melewati batas waktu peminjaman dan belum dikembalikan.']],400);
+                    if($check2 !== null && Carbon::now()->format('Y-m-d') > $check2?->selesai){
+                        return response()->json(['status'=>'validation error','message'=>['Tidak dapat membuat permintaan, pengguna ini sementara meminjam <strong>'.$value['name'].'</strong>, dengan kondisi telah melewati batas waktu peminjaman dan belum dikembalikan.']],400);
+                    }
                 }
 
-                PeminjamanBarang::create([
+                $peminjaman = PeminjamanBarang::create([
                     'user_id' => $pengguna[0],
                     'no_hp' => $request->no_hp,
-                    'barang_id' => $barang[0],
-                    'kode_barang' => $barang[1],
-                    'nama_barang' => $barang[2],
+                    // 'barang_id' => $barang[0],
+                    // 'kode_barang' => $barang[1],
+                    // 'nama_barang' => $barang[2],
                     'mulai' => $request->mulai,
                     'selesai' => $request->selesai,
                     'deskripsi' => $request->deskripsi,
                     'status' => 'sementara'
                 ]);
 
-                $barang = Barang::where('id',$barang[0])->first();
-                $barang->update(['stok' => $barang->stok - 1]);
+                // $barang = Barang::where('id',$barang[0])->first();
+                // $barang->update(['stok' => $barang->stok - 1]);
+                foreach ($barangs as $value) {
+                    $barang = Barang::where('id',$value['id'])->first();
+                    $barang->update(['stok' => $barang->stok - $value['qty']]);
+                    
+                    BarangPinjam::create([
+                        'peminjaman_id' => $peminjaman->id,
+                        'barang_id' => $value['id'],
+                        'qty' => $value['qty']
+                    ]);
+                }
 
                 DB::commit();
                 return response()->json(['status'=>'success', 'message'=>'Berhasil disimpan.'],200);
@@ -112,7 +163,7 @@ class PeminjamanBarangController extends Controller
     {
         DB::beginTransaction();
 
-        // var_dump("check : ", $request->password);
+        // var_dump("check : ");
         try {
             $rules = [
                 'status' => 'required',
@@ -134,8 +185,12 @@ class PeminjamanBarangController extends Controller
                 $peminjamanBarang = PeminjamanBarang::where('id',$id)->first();
                 $peminjamanBarang->update($data);
     
-                $barang = Barang::where('id',$peminjamanBarang->barang_id)->first();
-                $barang->update(['stok' => $barang->stok + 1]);
+                $barangPinjam = BarangPinjam::where('peminjaman_id', $id)->get();
+
+                foreach ($barangPinjam as $value) {
+                    $barang = Barang::where('id',$value->barang_id)->first();
+                    $barang->update(['stok' => $barang->stok + $value->qty]);
+                }
 
                 DB::commit();
                 return response()->json(['status'=>'success', 'message'=>'Berhasil mengubah status peminjaman.'],200);
@@ -181,9 +236,9 @@ class PeminjamanBarangController extends Controller
                         ->orderBy('peminjaman_barang.created_at', 'DESC')
                         ->select(
                             'peminjaman_barang.id',
-                            'kode_barang',
+                            // 'kode_barang',
                             'users.name as nama_user',
-                            'nama_barang',
+                            // 'nama_barang',
                             'mulai',
                             'selesai',
                             'deskripsi',
@@ -195,12 +250,12 @@ class PeminjamanBarangController extends Controller
             ->addColumn('nama_user', function ($data) {
                 return $data->nama_user;
             })
-            ->addColumn('kode_barang', function ($data) {
-                return $data->kode_barang;
-            })
-            ->addColumn('nama_barang', function ($data) {
-                return $data->nama_barang;
-            })
+            // ->addColumn('kode_barang', function ($data) {
+            //     return $data->kode_barang;
+            // })
+            // ->addColumn('nama_barang', function ($data) {
+            //     return $data->nama_barang;
+            // })
             ->addColumn('mulai', function ($data) {
                 return $data->mulai;
             })

@@ -38,8 +38,6 @@
                       <tr>
                         <th>No</th>
                         <th>Peminjam</th>
-                        <th>Kode Barang</th>
-                        <th>Nama</th>
                         <th>Mulai</th>
                         <th>Selesai</th>
                         <th>Deskripsi</th>
@@ -67,6 +65,7 @@
           <div class="modal-body">
 
             <div class="form-group">
+              
               <label>Pengguna <span style="color: red">*</span></label><br>
               <div id="formContainer">
                 <select id="pengguna" class="form-control" name="user_id" required=""></select>
@@ -80,13 +79,26 @@
             </div>
 
             <div class="form-group">
+              <input type="hidden" name="barang" id="barangs-json">
               <label>Barang <span style="color: red">*</span></label><br>
-              <select class="form-control" name="barang" required="">
-                <option value="">Pilih</option>
-                @foreach ($daftarBarang as $item)
-                  <option value="{{$item->id}}~{{$item->kode}}~{{$item->nama}}">{{$item->kode}} ~ {{$item->nama}} (Stok : {{$item->stok}})</option>
-                @endforeach
-              </select>
+              <div class="d-flex justify-content-center align-items-center">
+                <div class="w-100">
+                  <select id="selectBarang" class="form-control">
+                    <option value="">Pilih</option>
+                    @foreach ($daftarBarang as $item)
+                      <option value="{{$item->id}}~{{$item->kode}}~{{$item->nama}}">{{$item->kode}} ~ {{$item->nama}} (Stok : {{$item->stok}})</option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="w-5">
+                  <input type="number" id="qtyBarang" placeholder="Jumlah" class="form-control">
+                </div>
+                <div class="">
+                  <button type="button" id="tambahBarang" class="btn btn-primary">Tambah</button>
+                </div>
+              </div>
+              <div id="listBarang" class="mt-2">
+              </div>
             </div>
 
             <div class="form-group">
@@ -134,7 +146,7 @@
               </div>
             </div>
 
-            <input type="hidden" id="editDataId">
+            <input type="hidden" id="editDataId" name="barang">
             <div class="form-group">
               <label>Status</label>
               <select id="status" name="status" class="custom-select" required>
@@ -157,6 +169,9 @@
 
 @push('scripts')
   <script>
+
+    let barangs = [];
+
     $(function () {
 
       /*------------------------------------------ Render DataTable --------------------------------------------*/ 
@@ -169,8 +184,8 @@
         columns: [
           {data: 'DT_RowIndex', name: 'DT_RowIndex'},
           {data: 'nama_user', name: 'nama_user'},
-          {data: 'kode_barang', name: 'kode_barang'},
-          {data: 'nama_barang', name: 'nama_barang'},
+          // {data: 'kode_barang', name: 'kode_barang'},
+          // {data: 'nama_barang', name: 'nama_barang'},
           {data: 'mulai', name: 'mulai'},
           {data: 'selesai', name: 'selesai'},
           {data: 'deskripsi', name: 'deskripsi'},
@@ -179,7 +194,7 @@
           {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         columnDefs: [
-          { className: "dt-center", targets: [ 0, 1, 2, 3, 4, 5, 6, 7 ] }
+          { className: "dt-center", targets: [ 0, 1, 2, 3, 4, 5 ] }
         ]
       });
 
@@ -283,6 +298,10 @@
             // enable button
             $("#confirmAddBtn").prop("disabled",false); 
             $("#closeAddBtn").prop("disabled",false);
+
+            barangs = [];
+            $("#listBarang").children().remove();
+            document.getElementById('barangs-json').value = JSON.stringify([])
           }
         });
       });
@@ -328,6 +347,8 @@
           },
           error: function (data) {
             let html = "";
+            // console.log('testing data ', data.responseJSON);
+            
             const { status, message } = data.responseJSON;
 
             for (const key in message) {
@@ -349,7 +370,6 @@
           }
         });
       });
-  
   
       $(document).ready(function() {
         $('#pengguna').select2({
@@ -392,7 +412,57 @@
             }
         });
       });
+
+      $('#selectBarang').change(function(e) {
+        // Code to execute when the input changes
+      });
+
+      $('#tambahBarang').click(function(){
+        const barang = $("#selectBarang").val().split("~");
+        const qty = $("#qtyBarang").val();
+
+        if(barangs.some(obj => obj.id === barang[0])){
+          alert('Barang sudah tersedia.');
+          return
+        }
+
+        if(barang.length <= 1){
+          alert('Barang tidak boleh kosong.');
+          return
+        }
+        if(!qty){
+          alert('Jumlah barang tidak boleh kosong.');
+          return 
+        }
+
+        barangs.push({id: barang[0], name: barang[2], qty: qty})
+
+        $('#listBarang').append(`
+          <span id="${barang[0]}" class="mt-1 d-flex align-items-center justify-content-between border border-secondary rounded-lg" style="border-radius: 5px; padding: 4px 10px; ">
+            <span>${barang[2]}</span>
+            <span>Jumlah : ${qty}</span>
+            <button type="button" onclick="deleteBarang('${barang[0]}')" style="padding: 0px 5px;" class="btn btn-secondary"><i class="fas fa-times"></i></button>
+          </span>
+        `);
+
+        $('#selectBarang').val('');
+        $('#qtyBarang').val('');
+        handleInputArray();
+      });
+
     });
+
+    function deleteBarang (id){
+      $(`#${id}`).remove();
+      barangs = barangs.filter(data=>data.id !== id);
+      // console.log('testing delete ', barangs);
+      handleInputArray();
+    }
+
+    function handleInputArray (){
+    // Simpan sebagai string JSON
+      document.getElementById('barangs-json').value = JSON.stringify(barangs);
+    }
 
   </script>
 @endpush

@@ -51,6 +51,22 @@
       <!-- Main Content -->
       <div class="main-content" >
         <section class="section">
+{{-- 
+          <div class="d-flex justify-content-between">
+            <h1>TIK POLRI</h1>
+            
+          </div> --}}
+
+          <div class="row align-items-center mb-4">
+            <div class="col-12 col-sm-10 p-4 ">
+                <h1 class="">TIK <span style="color: rgb(223, 1, 1)">POLRI</span></h1>
+                <p class="">Sistem peminjaman barang untuk anggota.</p>
+            </div>
+            <div class="col-12 col-sm-2 d-flex justify-content-center">
+                <img src="{{ asset('assets/img/logo.png') }}" class="float-right" width="150" alt="">
+            </div>
+          </div>
+
           <div class="section-header">
             <h1>Daftar Barang Tersedia</h1>
 

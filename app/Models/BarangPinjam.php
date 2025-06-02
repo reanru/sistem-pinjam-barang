@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuid;
 
-class PeminjamanBarang extends Model
+class BarangPinjam extends Model
 {
     use HasFactory;
     use Uuid;
 
     public $timestamps = true;
-    protected $table = "peminjaman_barang";
+    protected $table = "barang_pinjam";
     protected $fillable = [
-        'id','user_id','no_hp','mulai','selesai','deskripsi','status'
+        'id','peminjaman_id','barang_id','qty'
     ];
 }

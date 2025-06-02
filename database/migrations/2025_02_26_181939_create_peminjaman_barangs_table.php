@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('peminjaman_barang', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
-            $table->uuid('barang_id');
-            $table->string('kode_barang');
-            $table->string('nama_barang');
+            // $table->uuid('barang_id');
+            // $table->string('kode_barang');
+            // $table->string('nama_barang');
             $table->string('no_hp');
             $table->date('mulai');
             $table->date('selesai');
