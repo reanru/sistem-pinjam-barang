@@ -20,8 +20,7 @@
                   <thead>
                       <tr>
                         <th>No</th>
-                        <th>Kode Barang</th>
-                        <th>Nama</th>
+                        <th>Barang</th>
                         <th>Mulai</th>
                         <th>Selesai</th>
                         <th>Deskripsi</th>
@@ -52,8 +51,7 @@
         ajax: "{{ route('riwayat-peminjaman.datatable') }}",
         columns: [
           {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-          {data: 'kode_barang', name: 'kode_barang'},
-          {data: 'nama_barang', name: 'nama_barang'},
+          {data: 'barang', name: 'barang'},
           {data: 'mulai', name: 'mulai'},
           {data: 'selesai', name: 'selesai'},
           {data: 'deskripsi', name: 'deskripsi'},
@@ -62,7 +60,7 @@
           // {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         columnDefs: [
-          { className: "dt-center", targets: [ 0, 1, 2, 3, 4, 5, 6 ] }
+          { className: "dt-center", targets: [ 0, 1, 2, 3, 4, 5 ] }
         ]
       });
 

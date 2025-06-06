@@ -38,6 +38,7 @@
                       <tr>
                         <th>No</th>
                         <th>Peminjam</th>
+                        <th>Barang</th>
                         <th>Mulai</th>
                         <th>Selesai</th>
                         <th>Deskripsi</th>
@@ -184,6 +185,7 @@
         columns: [
           {data: 'DT_RowIndex', name: 'DT_RowIndex'},
           {data: 'nama_user', name: 'nama_user'},
+          {data: 'barang', name: 'barang'},
           // {data: 'kode_barang', name: 'kode_barang'},
           // {data: 'nama_barang', name: 'nama_barang'},
           {data: 'mulai', name: 'mulai'},
@@ -194,7 +196,7 @@
           {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         columnDefs: [
-          { className: "dt-center", targets: [ 0, 1, 2, 3, 4, 5 ] }
+          { className: "dt-center", targets: [ 0, 1, 2, 3, 4, 5, 6 ] }
         ]
       });
 

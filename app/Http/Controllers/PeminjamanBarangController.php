@@ -245,10 +245,30 @@ class PeminjamanBarangController extends Controller
                             'peminjaman_barang.status'
                         )->get();
 
+        foreach ($data as $value) {
+            $barang = BarangPinjam::leftJoin('barang','barang_pinjam.barang_id','barang.id')
+                                    ->where('barang_pinjam.peminjaman_id',$value->id)
+                                    ->select(
+                                        'barang.nama as nama_barang',
+                                        'barang_pinjam.qty as jumlah'
+                                    )
+                                    ->get();
+
+            $value->barang = $barang;
+        }
+
         return Datatables::of($data)->addIndexColumn()
             ->addIndexColumn()
             ->addColumn('nama_user', function ($data) {
                 return $data->nama_user;
+            })
+            ->addColumn('barang', function ($data) {
+                $temp = '';
+
+                foreach ($data->barang as $value) {
+                    $temp = $temp.'<li>'. $value->nama_barang ?? '-'.' ~ Jumlah : '. $value->jumlah ?? '-' .'</li>';
+                }
+                return '<ul style="padding:0px">'.$temp.'<ul>';
             })
             // ->addColumn('kode_barang', function ($data) {
             //     return $data->kode_barang;
@@ -281,7 +301,7 @@ class PeminjamanBarangController extends Controller
                     return '';
                 }
             })
-            ->rawColumns(['status','action'])
+            ->rawColumns(['barang','status','action'])
             ->make(true);
     }
 }

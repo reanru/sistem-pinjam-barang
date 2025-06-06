@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PeminjamanBarang;
+use App\Models\BarangPinjam;
 use DB, Auth, DataTables, Validator;
 
 class RiwayatPeminjamanController extends Controller
@@ -51,21 +52,33 @@ class RiwayatPeminjamanController extends Controller
                         ->orderBy('created_at', 'DESC')
                         ->select(
                             'id',
-                            'kode_barang',
-                            'nama_barang',
                             'mulai',
                             'selesai',
                             'deskripsi',
                             'status'
                         )->get();
 
+        foreach ($data as $value) {
+            $barang = BarangPinjam::leftJoin('barang','barang_pinjam.barang_id','barang.id')
+                                    ->where('barang_pinjam.peminjaman_id',$value->id)
+                                    ->select(
+                                        'barang.nama as nama_barang',
+                                        'barang_pinjam.qty as jumlah'
+                                    )
+                                    ->get();
+
+            $value->barang = $barang;
+        }
+
         return Datatables::of($data)->addIndexColumn()
             ->addIndexColumn()
-            ->addColumn('kode_barang', function ($data) {
-                return $data->kode_barang;
-            })
-            ->addColumn('nama_barang', function ($data) {
-                return $data->nama_barang;
+            ->addColumn('barang', function ($data) {
+                $temp = '';
+
+                foreach ($data->barang as $value) {
+                    $temp = $temp.'<li>'. $value->nama_barang ?? '-'.' ~ Jumlah : '. $value->jumlah ?? '-' .'</li>';
+                }
+                return '<ul style="padding:0px">'.$temp.'<ul>';
             })
             ->addColumn('mulai', function ($data) {
                 return $data->mulai;
@@ -92,7 +105,7 @@ class RiwayatPeminjamanController extends Controller
             //             data-original-title="Edit" class="edit btn btn-primary btn-sm show-edit-modal"><i class="fas fa-edit"></i></a>
             //     ';
             // })
-            ->rawColumns(['status','action'])
+            ->rawColumns(['barang','status','action'])
             ->make(true);
     }
 }
